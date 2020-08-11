@@ -1,0 +1,159 @@
+
+body{
+    margin:0;
+    padding:0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background: #e5e6e6;
+
+
+} 
+navbar ul{
+    padding:7px;
+    display:flex;
+    margin:0;
+    justify-content: space-evenly;
+    background: rgb(27, 99, 216);;
+}
+navbar ul li{
+    list-style: none;
+    font-size:18px;
+    background-color: none !important;
+
+
+}
+navbar ul li a{
+    color:white;
+    text-decoration: none;
+}
+navbar ul li:nth-child(1){
+    color: #ffffff;
+    font-size: 22px;
+    /* position: absolute; */
+    margin-left:-50px;
+    /* left:20px !important; */
+}
+router{
+text-align: center;
+}
+footer{
+    
+    position: absolute;
+    bottom:20px;
+    right:20px;
+    font-size:12px;
+    font-weight: 500;
+    color:rgb(81, 80, 80);
+}
+intro{
+    text-align:center;
+}
+.title{
+    background-color:grey;
+    padding:5px 0;
+    color:#fdfffd;
+    margin: 0;
+    font-size:18px;
+    text-align:center;
+    
+}
+section{
+    background: #e5e6e5;
+    height: 60vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.welcometext{
+    font-size:1.2rem;
+
+}
+.welcometext span{
+    color:#0c81e7;
+}
+a{
+    text-decoration:none;
+    color:#0c81e7;
+}
+.box{
+    position: absolute;
+    height: 300px;
+    width:170px;
+    transform-style: preserve-3d;
+    transform:perspective(1000px) rotateY(-55deg);
+}
+.main{
+    animation:animate 4s linear infinite ;
+    transform-style: preserve-3d;
+    position: absolute;
+    height: 100%;
+    width:100%;
+}
+.box .main span{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left:0;
+    top:0;
+    background:linear-gradient(0deg,#0c81e7,#eceef000,#00cc88);
+    border-radius: 80px;
+    transform-style: preserve-3d;
+    transform-origin: center;
+    display: block;
+}
+@keyframes animate{
+    100%{
+        transform: rotateX(0deg);
+    }
+    0%{
+        transform: rotateX(-359deg);
+       
+    }
+
+}
+.box .main span:nth-child(1){
+    transform:rotateX(45deg);
+   
+}
+.box .main span:nth-child(2){
+    transform:rotateX(90deg);
+   
+}
+.box .main span:nth-child(3){
+    transform:rotateX(-45deg);
+   
+}
+.box .main span:nth-child(4){
+    transform: rotateX(0deg);
+   
+}
+ul li{
+    list-style: none;
+    
+}
+router ul li:nth-child(odd){
+    background-color: #00cc88;
+    color:white;
+}
+router ul li:nth-child(even){
+    background-color: #469fdf;
+    color:white;
+
+}
+table{
+    tab-size: 50px;
+}
+table thead{
+    background:#0c81e7;
+    color:white;
+}
+table th{
+    width:50px;
+    padding:5px 20px;
+}
+table td{
+    color:rgb(35, 35, 35);
+    padding:5px 20px;
+}
+table tbody tr:nth-child(odd){
+    background-color: #c2c7c7;
+}

@@ -1,0 +1,57 @@
+
+
+{
+    "data": [
+        {
+            "name": "Dev",
+            "position":"CEO"
+        },
+        {
+            "name": "Jason Route",
+            "address": "Chitwan",
+            "position":"Employee"
+        },
+        {
+            "name": "Johnson Plate",
+            "address": "Bhaktapur",
+            
+            "position":"Human Resource"
+        },
+        {
+            "name": "Julia Cap",
+            "position":"Receptionist"
+        },
+        {
+            "name": "Santo Rumal",
+            "address": "Pokhara",
+            "position":"Security Guard"
+        },
+        {
+            "address": "Pokhara",
+            "name": "Kevin Doko",
+            "position":"Accountant"
+        },
+        {
+            "name": "Simron Nanglo",
+            "address": "Kathmandu",
+            "position":"Cleaner"
+        },
+        {
+            "address": "Simara",
+            "name": "Synthia Churot",
+            "position":"Employee"
+        },
+        {
+            "name": "Raven Kaag",
+            "address": "Nuwakot"
+        },
+        {
+            "address": "Kapan",
+            "name": "Amir Hamza"
+        },
+        {
+            "name": "Karun Varunp",
+            "address": "Dharan"
+        }
+    ]
+}
