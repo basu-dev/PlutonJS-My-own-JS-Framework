@@ -1,16 +1,20 @@
-export const child={
-    name:'child',
-    state:{},
-    props:{},
-    componentReady(){
-        // console.log(this.props)
-        this.setState({
-            value:this.template.getAttribute('prop')
-        })
+export const child = {
+  name: "child",
+  state: {},
+  props: {},
+  componentReady() {
+      console.log('child component ready called',this.name)
+    this.setState({
+      value: this.template.getAttribute("prop"),
+    });
+  },
+  actions: {
+    clicked: (component, e) => {
+      console.log(component);
     },
-     view(component){
-        let val=component.state.value?component.state.value:'';
-        return `<div>${val}</div>`
-    }
-    
-}
+  },
+  view() {
+     
+    return `<div #cat on='click,clicked,cat'>${this.state.name} ${this.state.address}</div>`;
+  },
+};

@@ -28,9 +28,6 @@ export class Router {
       });
   }
   hashChanged = () => {
-      if(this.app.onComponentDetach){
-    
-        this.app.onComponentDetach()}
       if(this.hashChangeEnabled){
         let hashvalue = window.location.hash.split("#")[1];
         if (hashvalue) {

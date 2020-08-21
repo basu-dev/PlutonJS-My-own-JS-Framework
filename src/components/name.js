@@ -5,12 +5,12 @@ export const name = {
   style: "",
   state: {
     users: [{ name: "cat" }, { name: "dev" }],
-    names: []
+    names: [],
   },
   componentReady() {
     let apiService = new Service();
-    apiService.get().then(e => {
-      this.setState({users:e})
+    apiService.get().then((e) => {
+      this.setState({ users: e });
       // self.updateView(this);
     });
   },
@@ -21,8 +21,9 @@ export const name = {
   componentDetach() {
     // console.log("component detached");
   },
-  view: ({ state, props, actions }) => {
-    let list = state.users.map(m => {
+  view ()  {
+    const { state, props, actions }=this;
+    let list = state.users.map((m) => {
       return `<tr>
                 <td>${m.name}</td>
                 <td>${m.position || "Employee"}</td>
@@ -45,8 +46,9 @@ export const name = {
         ${list}
     </tbody>
 </table>
+<parent></parent>
       
        </div>
        `;
-  }
+  },
 };

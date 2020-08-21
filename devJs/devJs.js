@@ -14,10 +14,11 @@ export class devJS {
     this.indexSelector = document.querySelector(indexSelector);
 
     this.selectors = [];
-    components.forEach(component => {
+    components.forEach((component) => {
       this.addComponent(component);
     });
     this.initialize();
+
     // this.proxify.bind(this);
   }
   //this is used to transfer data about app initilization and router Enabled;
@@ -28,13 +29,12 @@ export class devJS {
   }
   //At the beginning of the app,component named 'app'is served;
   initialize() {
+    this.detachElement.bind(this);
     let entryComponent = this.components["app"];
     if (
       entryComponent
-        .view(
-          entryComponent.state,
-          entryComponent.props,
-          entryComponent.actions
+        .view.call(entryComponent,
+          entryComponent
         )
         .includes(`<${this.routeName}></${this.routeName}>`)
     ) {
@@ -48,9 +48,16 @@ export class devJS {
       // component.state=this.proxify(component,component.state);
       component.rendered = false;
     }
-    component.parent = this;
+    component.innerComponents = [];
+    component.childComponents = [];
+    component.global = this;
     component.setState = this.setState.bind(component);
     component.setProps = this.setProps.bind(component);
+//  component.actions?Object.keys(component.actions).forEach(i=>{
+//    component.actions[i].bind(component);
+//  }):''
+   
+  //  component.view.bind(component)
     component.cloneCount = 0;
     // if (component.props) {
     //   component.props = this.proxify(component.component.props);
@@ -60,7 +67,7 @@ export class devJS {
     this.components[component.name] = component;
   }
   //if separate element is passed it means it is a child component so
-  // currentComponent value is set only for the parent element
+  // currentComponent value is set only for the global element
   //First of all ShowComponent is called,then updateView then renderView and
   //finally attachEvents
   async showComponent(component, element) {
@@ -69,18 +76,39 @@ export class devJS {
     }
     this.updateView(component, element);
     let thisComponent = element ? this.currentComponent : component;
-    console.log(element);
     // if(component && !element.getAttribute('isHook')){
-    if (component.hasOwnProperty("componentReady")) {
-      component.componentReady.bind(component);
-      component.componentReady(component.state);
+    if (element && element.getAttribute("isHook")) {
+      console.log("hook");
+    } else if (
+      component.hasOwnProperty("componentReady") &&
+      !component.rendered
+    ) {
+      // console.log(component.componentReady)
+      component.componentReady.call(component ,component);
       // }
     }
   }
   //renderView actually attaches elements to DOM
   //It renders on each property change... That should be fixed soon.
   //It should be rendered only on the property that is bound to change
+  prevOrigin = {};
+
+  detachElement(a) {
+    if (!a.parentElement.parentElement.origin) {
+      return;
+    }
+    let origin = a.parentElement.parentElement.origin;
+    if (origin == this.prevOrigin) {
+      this.prevOrigin = {};
+      return;
+    } else {
+      this.prevOrigin = origin;
+      this.onComponentDetach(origin);
+    }
+    // console.log(a.parentElement)
+  }
   renderView = (component, el, tem) => {
+    // console.log('render View Called')
     // //console.log('rendering',component.name)
     if (el.children.length > 0) {
     } else {
@@ -89,15 +117,31 @@ export class devJS {
     }
     component.template = el;
     component.props = component.attributes;
-    //console.log("FROM",el.children[0],"TO",tem)
-    let a = morphdom(el.children[0], tem);
-    // //console.log("from morphdom ",a);
-    let eventElements = el.children[0].querySelectorAll(`[on]`);
-    if (!component.rendered) {
-      component.rendered = true;
-      this.attachEvents(component, eventElements);
-    }
+
+    let a = morphdom(
+      el.children[0],
+      tem,
+      {
+        onBeforeNodeDiscarded: this.detachElement.bind(this),
+        onNodeAdded: () => {
+          this.onNodeAdded.bind(component).call(component, el);
+        },
+      },
+      component
+    );
+    self = this;
+    el.origin = component;
   };
+  onNodeAdded(el) {
+    let component = this;
+    if (!this.rendered) {
+      let eventElements = el.querySelectorAll(`[on]`);
+      if (!component.rendered && eventElements.length > 0) {
+        this.global.attachEvents(component, eventElements);
+        component.rendered = true;
+      }
+    }
+  }
   //enents like click is attached through this
   //the syntax of adding event on html will be changed on coming updates and it will be able to pass data
   //for now data cannot be passed through events handling only the reference to the html element which triggered the event will be passed
@@ -106,16 +150,16 @@ export class devJS {
       let e = eventElements[i];
       let event = e.getAttribute("on");
       let key;
-      let [eventtype, action] = event.split(",");
-      let [actionName, value] = action.split("(");
-      function passEventThis(component, actionName, e) {
+      let reg = /([a-z]+),([aA-zZ]+)/;
+      let [, eventtype, actionName] = event.match(reg);
+      function passEventThis( actionName, e) {
         //console.log(this)
-        this.actions[actionName].bind(component);
-        this.actions[actionName].apply(this, [this, e]);
+        // this.actions[actionName].bind(component);
+        this.actions[actionName].call(this, this, e);
       }
-      const ev = event => {
+      const ev = (event) => {
         event.preventDefault();
-        passEventThis.call(component, component, actionName, event);
+        passEventThis.call(component, actionName, event);
       };
       let a = e.addEventListener(eventtype, ev);
       self = this;
@@ -141,8 +185,8 @@ export class devJS {
     for (let i = 0; i < htmlArr.length; i++) {
       finalHtml = finalHtml.concat(htmlArr[i]);
     }
-    let index = finalHtml.indexOf(" ");
-    // console.log(finalHtml)
+
+    // finalHtml= finalHtml.splice('child',1)
 
     this.setChildProp(self, objects);
     return finalHtml;
@@ -154,29 +198,38 @@ export class devJS {
       i = p.childComponents.length;
       if (i > 0) {
         clearInterval(TI);
-        for (let j = 0; j < p.childComponents.length; j++) {
+        
+        let len = p.childComponents.length;
+        for (let j = 0; j < len; j++) {
+          let childComp=p.childComponents[j];
           if (p.childComponents[j].props == undefined) {
-            p.childComponents[j].props = v;
-            p.childComponents[j].componentReady();
-            return;
+            console.log(`props of ${p.childComponents[j].name} is undefined`);
+            p.childComponents[j].props = v[0];
+            console.log(v)
+            console.log(`props is now`, p.childComponents[j].props.name);
+            if(!childComp.rendered){
+              p.childComponents[j].componentReady.call(childComp,childComp);
+            }
+            break;
           }
         }
       }
     });
   }
-
   setState(state) {
     //console.log(state)
     let stateProps = Object.getOwnPropertyNames(state);
-    stateProps.forEach(p => {
+    stateProps.forEach((p) => {
       this.state[p] = state[p];
     });
-    self.updateView(this, this.template);
+    if (self !== this) {
+      this.global.updateView(this, this.template);
+    }
   }
   setProps(props) {
     //console.log(state)
     let propss = Object.getOwnPropertyNames(props);
-    propss.forEach(p => {
+    propss.forEach((p) => {
       if (this.props) {
         this.props[p] = props[p];
       }
@@ -188,15 +241,24 @@ export class devJS {
     let props = component.props ? component.props : null;
     self = component;
     let template = component
-      ? component.view(component)
+      ? component.view.call(component,component)
       : `<h3>Page Not Found</h3>`;
-    let innerComponents = [];
-    component.childComponents = [];
-    this.selectors.forEach(s => {
+
+    this.selectors.forEach((s) => {
       if (template.includes(`</${s}>`)) {
-        innerComponents.push(this.components[s]);
+        // console.log(component.innerComponents)
+        component.innerComponents.push(this.components[s]);
       }
     });
+    // if (component.children) {
+    //   console.log(component.children);
+    //   component.childern.forEach((c) => {
+    //     if (template.includes(`</${c}>`)) {
+    //       component.innerComponents.push(c);
+    //     }
+    //   });
+    // }
+
     let renderElem = element
       ? element
       : this.routeElement
@@ -208,45 +270,54 @@ export class devJS {
       this.initialized = true;
       this.startObservable({
         initialized: true,
-        routerEnabled: this.routerEnabled
+        routerEnabled: this.routerEnabled,
       });
     }
-    if (innerComponents.length > 0) {
-      innerComponents.forEach(c => {
-        let innerComps = renderElem.querySelectorAll(c.name);
-        //console.log(innerComps)
-        innerComps.forEach((elem, i) => {
-            //there is some problem to be fixed
-          if (component.childComponents) {
-            //   console.log(elem.children)
-            let newComp = { ...c };
-            newComp.rendered = undefined;
-            newComp.name = `${c.name}${(c.cloneCount + 1).toString()}`;
-            c.cloneCount++;
-            this.addComponent(newComp);
-            component.childComponents.push(newComp);
 
-            this.showComponent(newComp, innerComps[i]);
-          }
+    if (
+      component.innerComponents.length > 0 &&
+      component.innerComponents.length > component.childComponents.length
+    ) {
+      component.innerComponents.forEach((c) => {
+        component.childSelectors = renderElem.querySelectorAll(c.name);
+        //console.log(innerComps)
+        component.childSelectors.forEach((elem, i) => {
+          let newComp = { ...c };
+          newComp.rendered = undefined;
+          newComp.name = `${c.name}${(c.cloneCount + 1).toString()}`;
+          c.cloneCount++;
+          newComp.parent = component;
+          this.addComponent(newComp);
+          component.childComponents.push(newComp);
+          this.showComponent(newComp, component.childSelectors[i]);
         });
       });
     }
+
     self = this;
   }
   ///Need to handle all the event handlers on component detatch
   //component detatch is only implemented on the elements changed through hash change..
   //inner Components don't have support for onDetatch
   //This should be fixed as soon as possible
-  onComponentDetach() {
-    if (this.currentComponent.componentDetach) {
-      this.currentComponent.componentDetach();
+  onComponentDetach(component) {
+    if (component.componentDetach) {
+      component.componentDetach();
     }
-    this.currentComponent.childComponents.forEach((e, i) => {
-      console.log(e);
-      //  console.log(this.currentComponent.childComponents[i])
+    // component.componentDetach?component.componentDetach():''
+    this.clearChildComponents(component);
+  }
+  clearChildComponents(component) {
+    component.childComponents.forEach((e, i) => {
+      this.clearChildComponents(e);
+      //  console.log(component.childComponents[i])
       delete this.components[e.name];
-      //  console.log(this.currentComponent.childComponents[i])
+
+      //  console.log(component.childComponents[i])
     });
-    this.currentComponent.childComponents = [];
+    component.cloneCount = 0;
+    component.childComponents = [];
+    component.childSelectors = [];
+    component.innerComponents = [];
   }
 }

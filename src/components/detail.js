@@ -1,13 +1,14 @@
 export const detail={
           name: "detail",
           selector:"app-detail",
-          state: { name: "Detail Page" ,message:"my-msg"},
+          state: { name: "Detail Page" ,message:"My Detail Page."},
           actions: {
             click(){
                 console.log("clicked")
             }
           },
-          componentReady(){
+          componentReady:(a)=>{
+            console.log(a)
             console.log('thi is detail component and it is ready as f.')
           },
           componentChange(prevValue,newValue){
@@ -16,7 +17,8 @@ export const detail={
           componentDetach(){
             console.log("Detaching detail component from dom")
           },
-          view: ({state}) => {
+          view:(comp)=>  {
+         let {state}=comp;
             return `
             <div >
             <div on='click,click' class='title'>Detail Page</div>

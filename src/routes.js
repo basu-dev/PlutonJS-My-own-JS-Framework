@@ -8,8 +8,8 @@ export class Route extends Router{
         super(app,
             [
                 {
-                    routeName:'test',
-                    componentName:'test'
+                    routeName:'form',
+                    componentName:'myForm'
                 },
                 {
                     routeName:'name',

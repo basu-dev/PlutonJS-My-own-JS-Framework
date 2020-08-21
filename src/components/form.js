@@ -6,31 +6,37 @@ export const  myForm={
         password:''
     },
     componentReady(){
-        // console.log(this.name);
+        console.log(this.name);
         // console.log(this.template)
     },
     actions:{
-         setEmail:(component,e)=>{
-             console.log(self)
-            //  console.log(component,e.target.value)
-             component.setState({
-                 email:e.target.value
+         setEmail(component,e){
+             console.log(this)
+             console.log(e.target.value)
+             this.setState({
+                 email:e.target.value,
+                 password:this.state.password
              })
         },
-        setPassword:(component,e)=>{
-            component.setState({
+        setPassword(component,e){
+            console.log(this)
+            console.log(e.target.value)
+            this.setState({
+                email:this.state.email,
                 password:e.target.value
             })
         },
         submit(component,element){
-            console.log(component.state)
-            component.setState({
+            console.log(this.state)
+            this.setState({
                 email:"",
                 password:""
             })
         }   
     },
-    view:(component)=>{
+    view(){
+        let component=this;
+        //events are passed with syntax like on='click,clicked' where click is event and handler function mentioned in the actions object.
         return  `
         <div>
         <div class='title'>Login Form</div>

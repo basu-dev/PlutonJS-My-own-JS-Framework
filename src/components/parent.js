@@ -6,8 +6,11 @@ export const parent={
     state:{
         users:[]
     },
+    childrens:[
+        child
+    ],
     componentReady(){
-        console.log(this)
+        console.log('Parent Ready')
         let a=new Service();
      a.get().then(res=>{
             this.setState({
@@ -15,9 +18,13 @@ export const parent={
             })
         })  
     },
-    view:(component)=>{
-        let {state}=component
-        console.log(state)
+    actions:{
+        fromChild:(child)=>{
+            console.log("from Child",child)
+        }
+    },
+    view(){
+        let {state}=this
         let list=state.users.map((u)=>{ 
             return devJS.html`<child isHook='true' prop="${u}"></child>`
         })

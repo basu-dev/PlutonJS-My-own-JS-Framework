@@ -4,7 +4,7 @@ export const nav={
         // console.log("Navbar Component Started")
         // document.querySelector("navbar").addEventListener('click',this.clicked)
     },
-    view:()=>{
+    view(){
         return  `
         <div>
         <navbar> <ul>

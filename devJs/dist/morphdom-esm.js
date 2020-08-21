@@ -1,6 +1,6 @@
 var DOCUMENT_FRAGMENT_NODE = 11;
 
-function morphAttrs(fromNode, toNode) {
+function morphAttrs(fromNode, toNode,comp) {
     var toNodeAttrs = toNode.attributes;
     var attr;
     var attrName;
@@ -19,7 +19,16 @@ function morphAttrs(fromNode, toNode) {
         attrName = attr.name;
         attrNamespaceURI = attr.namespaceURI;
         attrValue = attr.value;
+        if(attrName.includes('#')){
+            let reg=/#([aA-zZ]+)/
+            comp[reg.exec(attrName)[1]]=toNode;
+            return
+        }
+        if(attrName=='on'){
+            let reg=/([a-z]+),([aA-zZ]+)/;
 
+            
+        }
         if (attrNamespaceURI) {
             attrName = attr.localName || attrName;
             fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
@@ -302,11 +311,10 @@ function defaultGetNodeKey(node) {
 
 function morphdomFactory(morphAttrs) {
 
-    return function morphdom(fromNode, toNode, options) {
+    return function morphdom(fromNode, toNode, options,comp) {
         if (!options) {
             options = {};
         }
-
         if (typeof toNode === 'string') {
             if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML' || fromNode.nodeName === 'BODY') {
                 var toNodeHtml = toNode;
@@ -492,7 +500,7 @@ function morphdomFactory(morphAttrs) {
                 }
 
                 // update attributes on original DOM element first
-                morphAttrs(fromEl, toEl);
+                morphAttrs(fromEl, toEl,comp);
                 // optional
                 onElUpdated(fromEl);
 
@@ -745,8 +753,9 @@ function morphdomFactory(morphAttrs) {
             // we know is the case if it has a parent node.
             fromNode.parentNode.replaceChild(morphedNode, fromNode);
         }
-
-        return morphedNode;
+        let returnValue={prev:fromNode,new:morphedNode}
+// console.log(fromNode,toNode,morphedNode)
+        return returnValue;
     };
 }
 

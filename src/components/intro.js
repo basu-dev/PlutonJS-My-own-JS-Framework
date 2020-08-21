@@ -1,7 +1,7 @@
 export const intro={
     name:'intro',
     componentReady(){
-        console.log("Detail component  ready")
+        console.log("Intro component  ready")
     },
     view(){
         return `
