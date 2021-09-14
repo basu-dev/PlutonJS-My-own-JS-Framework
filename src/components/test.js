@@ -1,11 +1,12 @@
-export const test={
-      name: "test",
+export const test = {
+  name: "test",
+  value: "helloA,",
   view() {
-    return `
+    return /*html*/ `
     <div>
-    <div class='title'>Test Page</div>
+    <div class='title'>${this.value}</div>
     <p>This is test component</p>
     </div>
     `;
-  }
-}
+  },
+};

@@ -1,11 +1,9 @@
-
-import "../src/main.js"
-export class Service{
-    constructor(){
-        this.dataEndPoint="http://localhost:3000/data";
-    }
-    get(){
-       return fetch(this.dataEndPoint).then(e=>e.json()
-        )
-    }
+export class Service {
+  instance;
+  constructor() {
+    this.dataEndPoint = "https://jsonplaceholder.typicode.com/users";
+  }
+  get() {
+    return fetch(this.dataEndPoint).then((e) => e.json());
+  }
 }

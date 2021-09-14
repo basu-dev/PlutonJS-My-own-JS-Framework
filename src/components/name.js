@@ -1,5 +1,5 @@
-import { Service } from "../Service.js";
-export const name = {
+import { Service } from "../Service";
+export const something = {
   name: "name",
   template: "",
   style: "",
@@ -21,19 +21,19 @@ export const name = {
   componentDetach() {
     // console.log("component detached");
   },
-  view ()  {
-    const { state, props, actions }=this;
+  view() {
+    const { state, props, actions } = this;
     let list = state.users.map((m) => {
-      return `<tr>
+      return /*html*/ `<tr>
                 <td>${m.name}</td>
                 <td>${m.position || "Employee"}</td>
                 <td>${m.address || "Kathmandu"}</td>
               </tr>`;
     });
-    return `
-       <div>
+    return /*html*/ `
+       <div >
        <div class='title'>Our Members</div>
-       <table>
+       <table class="name-component">
     <thead>
         <tr>
             <th>Name</th>
@@ -46,7 +46,6 @@ export const name = {
         ${list}
     </tbody>
 </table>
-<parent></parent>
       
        </div>
        `;

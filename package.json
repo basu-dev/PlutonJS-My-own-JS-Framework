@@ -3,10 +3,18 @@
   "version": "1.0.0",
   "description": "It is small JavaScript MVC framework",
   "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "lodash.clonedeep": "^4.5.0"
+  },
+  "devDependencies": {
+    "sass": "^1.39.2",
+    "vite": "^2.5.4"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite src",
+    "build": "vite build src ",
+    "serve": "vite preview"
   },
   "author": "Basu Dev",
   "license": "ISC"
