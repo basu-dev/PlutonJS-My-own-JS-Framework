@@ -2,4 +2,4 @@
 
 A small MVC framework like Vue or React created for own Personal Use.
 #see demoApp built on top of Pluton.
-https://devapp.netlify.app
+https://first-pluton-app.netlify.app
